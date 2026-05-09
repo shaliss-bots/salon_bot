@@ -48,20 +48,25 @@ def whatsapp():
                 state["service"] = services[key]["name"]
                 state["step"] = "time"
 
-                return (
+                resp.message (
                     f"Great choice 👍\n\n"
                     f"{services[key]['name']} {services[key]['price']}\n\n"
                     f"Available slots:\n11 AM\n1 PM\n4 PM\n\n"
                     f"Kaunsa time convenient rahega?"
                 )
+                return str(resp)
 
-        return "Please choose a valid service 😊"
+        resp.message("Please choose a valid service 😊")
+        return str(resp)
+        
+            
 
     # STEP 3: Time
     if state["step"] == "time":
         state["time"] = msg
         state["step"] = "name"
-        return responses.ask_name(state["lang"])
+        resp.message(responses.ask_name(state["lang"]))
+        return str(resp)
 
     # STEP 4: Name
     if state["step"] == "name":
@@ -70,14 +75,17 @@ def whatsapp():
 
         save_booking(state)
 
-        return responses.confirm(
+        resp.message(
+            responses.confirm(
             state["name"],
             state["service"],
             state["time"],
             state["lang"]
-        )
+                )    )
+        return str(resp)
 
-    return "Type hi to restart 😊"
+    resp.message("Type hi to restart 😊")
+    return str(resp)
 
 
 if __name__ == "__main__":
