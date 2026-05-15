@@ -25,14 +25,34 @@ def ask_ai(user_message):
 
             {
                 "role": "system",
-                "content": """
+                "content":  """
 
-                You are a salon assistant.
+                You are a premium salon AI assistant on WhatsApp.
 
-                Understand user's language
-                and reply in SAME language.
+                Understand natural human conversation.
 
-                Detect salon service.
+                Reply in the SAME:
+                - language
+                - tone
+                - slang
+                - conversational style
+
+                as the user.
+
+                Do NOT translate mechanically.
+
+                Keep replies:
+                - short
+                - natural
+                - warm
+                - human-like
+
+                You help users with:
+                - salon bookings
+                - beauty services
+                - timings
+                - pricing
+                - recommendations
 
                 Available services:
                 - haircut
@@ -43,12 +63,22 @@ def ask_ai(user_message):
                 - manicure
                 - pedicure
 
-                Keep replies short, natural and human-like.
+                If the user changes service,
+                adapt naturally.
 
-                Reply ONLY in this format:
+                Always understand:
+                - user intent
+                - service name
+                - language style
 
-                SERVICE: service_name
-                REPLY: short reply
+                Reply ONLY in valid JSON format like this:
+
+                {
+                   "intent": "booking",
+                    "service": "haircut",
+                    "reply": "natural reply here"
+                }
+
                 """
             },
 
@@ -76,22 +106,28 @@ def whatsapp():
     user = request.form.get("From")
 
     if user not in user_state:
-        user_state[user] = {"step": "start"}
+        user_state[user] = {
+            "service": "",
+            "time": "",
+            "name": "",
+            "intent": "",
+            "welcomed": False,
+            "lang": ""
+        }
 
     state = user_state[user]
     resp = MessagingResponse()
     
     
     #welcome logo
-    if state["step"] == "start":
-
-      lang = detect_language(msg)
-      state["lang"] = lang
-      state["step"] = "service"
+    greetings = ["hi","hello","hey","hii"]
+    
+    if msg in greetings and not state["welcomed"]:
+        state["welcomed"] = True
 
     # First send branding image
     image_msg = resp.message()
-    image_msg.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/your-image-link")
+    image_msg.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/Untitled_design_2_t1kqlx.png")
 
     # Then send welcome message
     resp.message(
@@ -101,24 +137,12 @@ def whatsapp():
 
    I’m here to help you with salon bookings and beauty services 💄
 
-   You can chat with me naturally in different languages like:
+   Main tumhari language naturally samajh sakta hu.
 
-   Hindi  
-   English  
-   Punjabi  
-   Chhattisgarhi
-
-   💬 For example:
-
-    • “Haircut karwana hai”
-    • “Spa chahiye”
-    • “Facial booking”
-    • “Makeup appointment”
-
-    Don’t worry — I’ll understand you 😊
-
-    ✨ Which service would you like today?
-        """
+   Hindi . English . Punjabi . Chhattisgarhi
+   
+   kaunsi service chahiye today? 😊
+    """
     )
 
     return str(resp)
@@ -129,26 +153,25 @@ def whatsapp():
 
      ai_reply = ask_ai(msg)
 
-    lines = ai_reply.split("\n")
+    ai_data = json.loads(ai_reply)
+    
+    intent = ai_data["intent"]
+    service = ai_data["service"].lower()
+    reply_text = ai_data["reply"]
 
-    service = lines[0].replace("SERVICE:", "").strip().lower()
+    if intent == "booking" and service in services:
 
-    reply_text = lines[1].replace("REPLY:", "").strip()
-
-    if service in services:
-
-        state["service"] = services[service]["name"]
-        state["step"] = "time"
-
+        state["service"] = service
+        
         resp.message(
 
             f"{reply_text}\n\n"
-
             f"Available slots:\n"
             f"11 AM\n"
             f"1 PM\n"
             f"4 PM"
             )
+        state["step"] = "time"
 
         return str(resp)
 
@@ -171,7 +194,7 @@ def whatsapp():
 
     # STEP 4: Name
     if state["step"] == "name":
-        state["name"] = msg.title()
+        state["name"] = msg
         state["step"] = "done"
 
         save_booking(state)
