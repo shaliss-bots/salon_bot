@@ -2,13 +2,65 @@ from flask import Flask, request
 import json
 from twilio.twiml.messaging_response import MessagingResponse
 import json  
+import os
 from services import services
 import responses
 from language import detect_language
+from openai import OpenAI
+user_state = {}
+
 
 app = Flask(__name__)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-user_state = {}
+
+
+def ask_ai(user_message):
+
+    response = client.chat.completions.create(
+
+        model="gpt-3.5-turbo",
+
+        messages=[
+
+            {
+                "role": "system",
+                "content": """
+
+                You are a salon assistant.
+
+                Understand user's language
+                and reply in SAME language.
+
+                Detect salon service.
+
+                Available services:
+                - haircut
+                - hair spa
+                - facial
+                - makeup
+                - waxing
+                - manicure
+                - pedicure
+
+                Keep replies short, natural and human-like.
+
+                Reply ONLY in this format:
+
+                SERVICE: service_name
+                REPLY: short reply
+                """
+            },
+
+            {
+                "role": "user",
+                "content": user_message
+            }
+
+        ]
+    )
+
+    return response.choices[0].message.content
 
 def save_booking(data):
     with open("data.json", "r+") as f:
@@ -29,35 +81,84 @@ def whatsapp():
     state = user_state[user]
     resp = MessagingResponse()
     
+    
     #welcome logo
     if state["step"] == "start":
-        lang = detect_language(msg)
-        state["lang"] = lang
-        state["step"] = "service"
 
-        message = resp.message("Welcome to *Glow Salon*\n\n"
-                               "Your beauty assistant and you can talk in your langunage\n\n")
-        
-        message.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/Untitled_design_2_t1kqlx.png")
+      lang = detect_language(msg)
+      state["lang"] = lang
+      state["step"] = "service"
 
+    # First send branding image
+    image_msg = resp.message()
+    image_msg.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/your-image-link")
 
-    # STEP 2: Service selection
+    # Then send welcome message
+    resp.message(
+   """✨ *Glow Salon Assistant* ✨
+
+   Hey beautiful 😊
+
+   I’m here to help you with salon bookings and beauty services 💄
+
+   You can chat with me naturally in different languages like:
+
+   Hindi  
+   English  
+   Punjabi  
+   Chhattisgarhi
+
+   💬 For example:
+
+    • “Haircut karwana hai”
+    • “Spa chahiye”
+    • “Facial booking”
+    • “Makeup appointment”
+
+    Don’t worry — I’ll understand you 😊
+
+    ✨ Which service would you like today?
+        """
+    )
+
+    return str(resp)
+           
+    #step 2 service             
+           
     if state["step"] == "service":
-        for key in services:
-            if key in msg:
-                state["service"] = services[key]["name"]
-                state["step"] = "time"
 
-                resp.message (
-                    f"Great choice 👍\n\n"
-                    f"{services[key]['name']} {services[key]['price']}\n\n"
-                    f"Available slots:\n11 AM\n1 PM\n4 PM\n\n"
-                    f"Kaunsa time convenient rahega?"
-                )
-                return str(resp)
+     ai_reply = ask_ai(msg)
 
-        resp.message("Please choose a valid service 😊")
+    lines = ai_reply.split("\n")
+
+    service = lines[0].replace("SERVICE:", "").strip().lower()
+
+    reply_text = lines[1].replace("REPLY:", "").strip()
+
+    if service in services:
+
+        state["service"] = services[service]["name"]
+        state["step"] = "time"
+
+        resp.message(
+
+            f"{reply_text}\n\n"
+
+            f"Available slots:\n"
+            f"11 AM\n"
+            f"1 PM\n"
+            f"4 PM"
+            )
+
         return str(resp)
+
+    else:
+
+        resp.message(
+            "Sorry 😊 please tell me service again."
+        )
+
+        return str(resp)        
         
             
 
@@ -65,8 +166,8 @@ def whatsapp():
     if state["step"] == "time":
         state["time"] = msg
         state["step"] = "name"
-        resp.message(responses.ask_name(state["lang"]))
-        return str(resp)
+    resp.message(responses.ask_name(state["lang"]))
+    return str(resp)
 
     # STEP 4: Name
     if state["step"] == "name":
@@ -87,7 +188,7 @@ def whatsapp():
     resp.message("Type hi to restart 😊")
     return str(resp)
 
-
+ 
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT",5000))
