@@ -17,7 +17,7 @@ def ask_ai(user_message):
 
     response = client.chat.completions.create(
 
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini",
 
         messages=[
 
@@ -136,10 +136,9 @@ def whatsapp():
         kaunsi service chahiye today? 😊
         """
         )
-
         return str(resp)
     
-  # ai reply          
+      # ai reply          
     ai_reply = ask_ai(msg)
     resp.message(ai_reply)
     return str(resp)
