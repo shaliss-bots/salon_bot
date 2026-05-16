@@ -4,8 +4,6 @@ from twilio.twiml.messaging_response import MessagingResponse
 import json  
 import os
 from services import services
-import responses
-from language import detect_language
 from openai import OpenAI
 user_state = {}
 
@@ -25,63 +23,61 @@ def ask_ai(user_message):
 
             {
                 "role": "system",
-                "content":  """
+                 "content": """
+                  You are Glow Salon's premium AI WhatsApp assistant.
 
-                You are a premium salon AI assistant on WhatsApp.
+                  Your job:
+                  - Talk like a real human salon receptionist.
+                  - Understand ANY language naturally.
+                  - Reply in the SAME language and tone as the user.
+                  - Be warm, friendly, stylish and short.
+                  - Never sound robotic.
 
-                Understand natural human conversation.
+                    Salon details:
 
-                Reply in the SAME:
-                - language
-                - tone
-                - slang
-                - conversational style
+                    Services and prices:
+                    - Haircut = ₹300
+                    - Facial = ₹800
+                    - Hair Spa = ₹1200
+                    - Makeup = ₹2500
+                    - Waxing = ₹700
+                    - Manicure = ₹500
+                    - Pedicure = ₹600
 
-                as the user.
+                    Available booking times:
+                    11 AM
+                    1 PM
+                    4 PM
 
-                Do NOT translate mechanically.
+                    Rules:
+                    - If user wants a salon service, guide them naturally to booking.
+                    - Ask only one thing at a time.
+                    - First understand what service they want.
+                    - Then ask preferred time.
+                    - Then ask name.
+                    - Then confirm booking beautifully.
 
-                Keep replies:
-                - short
-                - natural
-                - warm
-                - human-like
+                    Examples:
+                    User: menu haircut karna si
+                    Reply: Bilkul 😊 Haircut karvaoge. Tuhanu kehda time pasand aa? 11 AM, 1 PM ya 4 PM?
 
-                You help users with:
-                - salon bookings
-                - beauty services
-                - timings
-                - pricing
-                - recommendations
+                    User: mujhe facial karana hai
+                    Reply: Sure 😊 Facial available hai. Kaunsa timing prefer karoge?
 
-                Available services:
-                - haircut
-                - hair spa
-                - facial
-                - makeup
-                - waxing
-                - manicure
-                - pedicure
+                    User: price kya hai haircut ka
+                    Reply: Haircut ₹300 ka hai 😊
 
-                If the user changes service,
-                adapt naturally.
+                    User: tusi ki kar rahe ho
+                    Reply: Bas tuhadi service layi ready haan 😊
 
-                Always understand:
-                - user intent
-                - service name
-                - language style
-
-                Reply ONLY in valid JSON format like this:
-
-                {
-                   "intent": "booking",
-                    "service": "haircut",
-                    "reply": "natural reply here"
-                }
-
-                """
+                    Important:
+                    - Understand slang, mixed language, typos and regional language naturally.
+                    - Never say you are AI unless asked.
+                    - Never give long paragraphs.
+                    - Keep replies short and natural.
+                    """
             },
-
+            
             {
                 "role": "user",
                 "content": user_message
@@ -107,13 +103,8 @@ def whatsapp():
 
     if user not in user_state:
         user_state[user] = {
-            "step": "service",
-            "service": "",
-            "time": "",
-            "name": "",
-            "intent": "",
-            "welcomed": False,
-            "lang": ""
+            "welcomed": False
+            
         }
 
     state = user_state[user]
@@ -121,9 +112,9 @@ def whatsapp():
     
     
     #welcome logo
-    greetings = ["hi","hello","hey","hii"]
     
-    if msg in greetings and not state["welcomed"]:
+    if not state["welcome"]:
+
         state["welcomed"] = True
 
         # First send branding image
@@ -147,69 +138,10 @@ def whatsapp():
         )
 
         return str(resp)
-           
-    #step 2 service             
-           
-    if state["step"] == "service":
-
-     ai_reply = ask_ai(msg)
-
-    ai_data = json.loads(ai_reply)
     
-    intent = ai_data["intent"]
-    service = ai_data["service"].lower()
-    reply_text = ai_data["reply"]
-
-    if intent == "booking" and service in services:
-
-        state["service"] = service
-        
-        resp.message(
-
-            f"{reply_text}\n\n"
-            f"Available slots:\n"
-            f"11 AM\n"
-            f"1 PM\n"
-            f"4 PM"
-            )
-        state["step"] = "time"
-
-        return str(resp)
-
-    else:
-
-        resp.message(
-            "Sorry 😊 please tell me service again."
-        )
-
-        return str(resp)        
-        
-            
-
-    # STEP 3: Time
-    if state["step"] == "time":
-        state["time"] = msg
-        state["step"] = "name"
-    resp.message(responses.ask_name(state["lang"]))
-    return str(resp)
-
-    # STEP 4: Name
-    if state["step"] == "name":
-        state["name"] = msg
-        state["step"] = "done"
-
-        save_booking(state)
-
-        resp.message(
-            responses.confirm(
-            state["name"],
-            state["service"],
-            state["time"],
-            state["lang"]
-                )    )
-        return str(resp)
-
-    resp.message("Type hi to restart 😊")
+  # ai reply          
+    ai_reply = ask_ai(msg)
+    resp.message(ai_reply)
     return str(resp)
 
  
