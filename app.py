@@ -107,6 +107,7 @@ def whatsapp():
 
     if user not in user_state:
         user_state[user] = {
+            "step": "service",
             "service": "",
             "time": "",
             "name": "",
