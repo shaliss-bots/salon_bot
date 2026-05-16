@@ -125,27 +125,27 @@ def whatsapp():
     if msg in greetings and not state["welcomed"]:
         state["welcomed"] = True
 
-    # First send branding image
-    image_msg = resp.message()
-    image_msg.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/Untitled_design_2_t1kqlx.png")
+        # First send branding image
+        image_msg = resp.message()
+        image_msg.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/Untitled_design_2_t1kqlx.png")
 
-    # Then send welcome message
-    resp.message(
-   """✨ *Glow Salon Assistant* ✨
+        # Then send welcome message
+        resp.message(
+        """✨ *Glow Salon Assistant* ✨
 
-   Hey beautiful 😊
+        Hey beautiful 😊
 
-   I’m here to help you with salon bookings and beauty services 💄
+        I’m here to help you with salon bookings and beauty services 💄
 
-   Main tumhari language naturally samajh sakta hu.
+        Main tumhari language naturally samajh sakta hu.
 
-   Hindi . English . Punjabi . Chhattisgarhi
+        Hindi . English . Punjabi . Chhattisgarhi
    
-   kaunsi service chahiye today? 😊
-    """
-    )
+        kaunsi service chahiye today? 😊
+        """
+        )
 
-    return str(resp)
+        return str(resp)
            
     #step 2 service             
            
