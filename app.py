@@ -103,7 +103,7 @@ def whatsapp():
 
     if user not in user_state:
         user_state[user] = {
-            "welcomed": False
+            "welcome": False
             
         }
 
