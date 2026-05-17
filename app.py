@@ -115,7 +115,7 @@ def whatsapp():
     
     if not state["welcome"]:
 
-        state["welcomed"] = True
+        state["welcome"] = True
 
         # First send branding image
         image_msg = resp.message()
@@ -140,7 +140,9 @@ def whatsapp():
     
       # ai reply          
     ai_reply = ask_ai(msg)
+    
     resp.message(ai_reply)
+    
     return str(resp)
 
  
