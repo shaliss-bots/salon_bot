@@ -10,7 +10,15 @@ user_state = {}
 
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
+services={
+    "haircut":300,
+    "facial":800,
+    "hair spa":1200,
+    "cleanup":600,
+    "waxing":700,
+    "makeup":2500
+}
+slots =["11 AM" ,"1 PM","4 PM"]
 
 
 def ask_ai(user_message):
@@ -24,108 +32,42 @@ def ask_ai(user_message):
             {
                 "role": "system",
                  "content": """
-                  
-            
-              You are Glow Salon's AI receptionist and beauty assistant on WhatsApp.
+                  You are Glow Salon's AI receptionist on WhatsApp.
 
-              Talk naturally like a real salon receptionist.
+                   Talk naturally like a real salon receptionist.
 
-              IMPORTANT RULES:
+                   IMPORTANT RULES:
 
-              * Always reply in the SAME language and tone as the user.
-              * Understand Hindi, Hinglish, Punjabi, English and mixed typing naturally.
-              * Keep replies short, natural and conversational.
-              * Sound warm, friendly and human-like.
-              * Never sound robotic.
-              * Never give long paragraphs.
-              * Reply like real WhatsApp chatting.
+                    * Always reply in the same language and tone as the user.
+                    * Understand Hindi, Hinglish, Punjabi, English and mixed typing naturally.
+                    * Keep replies short, natural and conversational.
+                    * Sound warm, friendly and human-like.
+                    * Never sound robotic.
+                    * Never randomly switch languages during the conversation.
+                    * Mirror the user's conversational style naturally.
 
-              LANGUAGE STYLE:
+                    LANGUAGE STYLE:
 
-              * Naturally mirror the user's language, tone and typing style.
-              * Do not force Punjabi, Hindi or English phrases unnecessarily.
-              * If user mixes languages, naturally mix languages too.
-              * Never translate mechanically.
-              * Keep the conversation realistic and smooth.
+                    * If the user speaks casually, reply casually.
+                    * If the user mixes languages, naturally mix languages too.
+                    * Never mechanically translate sentences.
+                    * Keep conversations smooth and realistic.
 
-              SALON SERVICES & PRICES:
+                     CONSULTATION RULES:
 
-              * Haircut = ₹300
-              * Facial = ₹800
-              * Hair Spa = ₹1200
-              * Cleanup = ₹600
-              * Waxing = ₹700
-              * Makeup = ₹2500
-              * Pedicure = ₹600
-              * Manicure = ₹500
-              * Keratin = ₹3500
+                    * If the user describes a beauty problem, respond like a real salon expert.
+                    * Give natural beauty suggestions conversationally.
+                    * If the user already knows what service they want, do not over-consult unnecessarily.
 
-              AVAILABLE BOOKING SLOTS:
+                     Never:
 
-              * 11 AM
-              * 1 PM
-              * 4 PM
+                    * behave like ChatGPT
+                    * say "How may I help you?"
+                    * give robotic replies
+                    * ask unrelated questions
 
-              BUSINESS RULES:
-
-              * Whenever user asks for a service, naturally mention the service price.
-              * If user already knows what they want, do not ask unnecessary consultation questions.
-              * Directly continue toward booking naturally.
-
-              CONSULTATION RULES:
-
-              Only do consultation if the user:
-
-              * describes a problem
-              * asks for suggestions
-              * seems confused
-
-              Examples:
-
-              User: Hair fall ho raha
-              Reply: Hair spa helpful rahega 😊 Problem recent start hui?
-
-              User: Face dull lag raha
-              Reply: Glow facial better rahega ✨ Skin oily hai ya dry?
-
-              User: Shaadi me jana hai
-              Reply: Makeup and hair styling perfect rahega 🌸 Function kab hai?
-
-              DIRECT BOOKING EXAMPLES:
-
-              User: Haircut karwana hai
-              Reply: Bilkul 😊 Haircut ₹300 ka hai. Kaunsa slot prefer karoge?
-
-              User: Facial karana hai
-              Reply: Sure ✨ Facial ₹800 ka hai. Kaunsa timing prefer karoge?
-
-              BOOKING FLOW:
-
-              1. Understand customer need
-              2. Mention service price naturally
-              3. Ask preferred time
-              4. Ask customer name
-              5. Confirm booking naturally
-              6. Never ask same thing twice
-              7. Never restart the conversation
-
-              IMPORTANT:
-
-             * Remember previous user messages naturally during the conversation.
-             * If service already selected, do not ask again.
-             * If time already selected, ask for name.
-             * If name already given, confirm booking directly.
-
-              NEVER:
-
-              *  Never behave like ChatGPT.
-              * Never say "How may I help you?"
-              * Never give robotic replies.
-              * Never force unnecessary consultation.
-              * Never ask unrelated questions.
-
-              Behave like a smart modern salon receptionist.
-               """
+                      Behave like a smart modern salon receptionist.
+                             """
             },
 
             {
@@ -153,7 +95,11 @@ def whatsapp():
 
     if user not in user_state:
         user_state[user] = {
-            "welcome": False
+            "welcome": False,
+            "step":"start",
+            "service":"",
+            "slot":"",
+            "name":""
             
         }
 
@@ -167,22 +113,21 @@ def whatsapp():
 
         state["welcome"] = True
 
-       
 
         #  welcome message and branding logo
         welcome_msg = resp.message(
-        """✨ *Glow Salon Assistant* ✨
+        """✨*Glow Salon Assistant*✨
 
 
         Hey beautiful 😊
 
         I’m here to help you with salon bookings and beauty services 💄
 
-        Main tumhari language naturally samajh sakta hu.
+         Main tumhari language naturally samajh sakta hu.
 
-        Hindi . English . Punjabi . Chhattisgarhi
+         Hindi . English . Punjabi . Chhattisgarhi
    
-        kaunsi service chahiye today? 😊
+         kaunsi service chahiye today? 😊
         """
         )
         
@@ -191,10 +136,89 @@ def whatsapp():
         return str(resp)
     
       # ai reply          
+    # detect service
+    for service in services:
+
+      if service in msg:
+
+        state["service"] = service
+        state["step"] = "slot"
+
+        price = services[service]
+
+        ai_reply = ask_ai(
+            f"""
+        User selected {service}.
+
+        Price is ₹{price}.
+
+        Ask preferred slot naturally in the SAME language as the user.
+
+        Available slots:
+        11 AM
+        1 PM
+        4 PM
+        """
+        )
+
+        resp.message(ai_reply)
+
+        return str(resp)
+
+
+      # slot selection
+    if state["step"] == "slot":
+
+       state["slot"] = msg
+       state["step"] = "name"
+
+       ai_reply = ask_ai(
+        """
+       Ask customer's name naturally in the same language.
+       """
+       )
+
+       resp.message(ai_reply)
+
+       return str(resp)
+
+
+      # final confirmation
+    if state["step"] == "name":
+
+       state["name"] = msg
+       state["step"] = "done"
+
+       service = state["service"]
+       price = services[service]
+       slot = state["slot"]
+       name = state["name"]
+
+       ai_reply = ask_ai(
+        f"""
+      Confirm salon booking naturally.
+
+      Customer name: {name}
+       Service: {service}
+       Price: ₹{price}
+       Slot: {slot}
+
+      Reply in the SAME language and tone as the user.
+
+      Make it feel like a real salon booking confirmation.
+      """
+     )
+
+       resp.message(ai_reply)
+
+       return str(resp)
+
+
+    # fallback AI chat
     ai_reply = ask_ai(msg)
-    
+
     resp.message(ai_reply)
-    
+
     return str(resp)
 
  
