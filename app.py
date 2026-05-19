@@ -167,6 +167,7 @@ def whatsapp():
     tone = data["tone"]
     intent = data["intent"]
     reply_text = data["reply"]
+    
 
     if user not in user_state:
         user_state[user] = {
@@ -182,6 +183,11 @@ def whatsapp():
         }
 
     state = user_state[user]
+    
+    if state["language"] == "":
+        state["language"] = language
+    language = state["language"] 
+       
     resp = MessagingResponse()
     
     
@@ -214,8 +220,21 @@ def whatsapp():
         return str(resp)
     
       #consultation reply
-    if intent == "consultation":
-        
+    booking_keywords =[
+        "haircut",
+        "facial",
+        "cleanup",
+        "waxing",
+        "makeup",
+        "spa"
+    ]
+    is_booking = any(word in msg for word in booking_keywords)
+    
+    if (
+        intent == "consultation"
+        and not is_booking
+        and state["step"] == "start"
+    ):   
         resp.message(reply_text)
         return str(resp) 
           
