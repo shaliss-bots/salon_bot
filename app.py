@@ -10,7 +10,8 @@ user_state = {}
 
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-services={
+
+services= {
     "haircut":300,
     "facial":800,
     "hair spa":1200,
@@ -18,10 +19,66 @@ services={
     "waxing":700,
     "makeup":2500
 }
-slots =["11 AM" ,"1 PM","4 PM"]
+
+slots = ["11 AM" ,"1 PM","4 PM"]
 
 
-def ask_ai(user_message):
+responses = {
+
+    "english": {
+
+        "slot":
+        "✨ {service} price is ₹{price}\nAvailable slots:\n11 AM\n1 PM\n4 PM 😊",
+
+        "name":
+        "😊 May I know your name for booking?",
+
+        "confirm":
+        "✨ Booking Confirmed 🎉\n{name}, your {service} appointment is booked for {slot}.\nPrice: ₹{price} 😊",
+        
+          
+    },
+
+    "hindi": {
+
+        "slot":
+        "✨ {service} ka price ₹{price} hai\nAvailable slots:\n11 AM\n1 PM\n4 PM 😊",
+
+        "name":
+        "😊 Booking ke liye aapka naam bata dijiye.",
+
+        "confirm":
+        "✨ Booking Confirmed 🎉\n{name} ji, aapka {service} appointment {slot} ke liye book ho gaya hai.\nPrice: ₹{price} 😊"
+    },
+
+    "punjabi": {
+
+        "slot":
+        "✨ {service} da price ₹{price} aa\nAvailable slots:\n11 AM\n1 PM\n4 PM 😊",
+
+        "name":
+        "😊 Booking layi apna naam dass deo.",
+
+        "confirm":
+        "✨ Booking Confirmed 🎉\n{name} ji, tuhadi {service} appointment {slot} layi book ho gayi aa.\nPrice: ₹{price} 😊"
+    },
+
+    "marathi": {
+
+        "slot":
+        "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n11 AM\n1 PM\n4 PM 😊",
+
+        "name":
+        "😊 Booking sathi tumcha nav सांगा.",
+
+        "confirm":
+        "✨ Booking Confirmed 🎉\n{name}, tumchi {service} appointment {slot} la confirm zali aahe.\nPrice: ₹{price} 😊"
+    }
+
+}
+
+
+def detect_user(user_message):
 
     response = client.chat.completions.create(
 
@@ -32,42 +89,49 @@ def ask_ai(user_message):
             {
                 "role": "system",
                  "content": """
-                  You are Glow Salon's AI receptionist on WhatsApp.
+                   You are ONLY a language analyzer.
 
-                   Talk naturally like a real salon receptionist.
+                    Detect:
 
-                   IMPORTANT RULES:
+                   1. language
+                   2. tone
+                   3. intent
 
-                    * Always reply in the same language and tone as the user.
-                    * Understand Hindi, Hinglish, Punjabi, English and mixed typing naturally.
-                    * Keep replies short, natural and conversational.
-                    * Sound warm, friendly and human-like.
-                    * Never sound robotic.
-                    * Never randomly switch languages during the conversation.
-                    * Mirror the user's conversational style naturally.
+                   Possible languages:
+                   english
+                   hindi
+                   punjabi
+                   marathi
+                   chhattisgarhi
 
-                    LANGUAGE STYLE:
+                   Possible intents:
+                   booking
+                   consultation
+                   chat
+                   
+                   If intent is consultation, also generate a short natural salon
+                   consultation reply in the same language as the user.
+                   
+                   If intent is booking, keep reply empty.
+                   
 
-                    * If the user speaks casually, reply casually.
-                    * If the user mixes languages, naturally mix languages too.
-                    * Never mechanically translate sentences.
-                    * Keep conversations smooth and realistic.
+                  Reply ONLY in JSON format.
 
-                     CONSULTATION RULES:
-
-                    * If the user describes a beauty problem, respond like a real salon expert.
-                    * Give natural beauty suggestions conversationally.
-                    * If the user already knows what service they want, do not over-consult unnecessarily.
-
-                     Never:
-
-                    * behave like ChatGPT
-                    * say "How may I help you?"
-                    * give robotic replies
-                    * ask unrelated questions
-
-                      Behave like a smart modern salon receptionist.
-                             """
+                  Example:
+                  {
+                    "language":"punjabi",
+                     "tone":"casual",
+                     "intent":"consultation",
+                     "reply":"Hair spa health reh sakda ho tusi😊"
+                    }
+                    
+                    {
+                        "language":"punjabi",
+                        "tone":"casual",
+                        "intent":"booking",
+                        "reply":""
+                    }
+                    """                
             },
 
             {
@@ -79,6 +143,8 @@ def ask_ai(user_message):
     )
 
     return response.choices[0].message.content
+
+
 
 def save_booking(data):
     with open("data.json", "r+") as f:
@@ -92,6 +158,15 @@ def save_booking(data):
 def whatsapp():
     msg = request.form.get("Body").lower()
     user = request.form.get("From")
+    
+    detected = detect_user(msg)
+    
+    data = json.loads(detected)
+    
+    language = data["language"]
+    tone = data["tone"]
+    intent = data["intent"]
+    reply_text = data["reply"]
 
     if user not in user_state:
         user_state[user] = {
@@ -99,7 +174,10 @@ def whatsapp():
             "step":"start",
             "service":"",
             "slot":"",
-            "name":""
+            "name":"",
+            "language":"",
+            "tone":"casual",
+            "intent":"booking"
             
         }
 
@@ -135,7 +213,12 @@ def whatsapp():
         
         return str(resp)
     
-      # ai reply          
+      #consultation reply
+    if intent == "consultation":
+        
+        resp.message(reply_text)
+        return str(resp) 
+          
     # detect service
     for service in services:
 
@@ -146,23 +229,10 @@ def whatsapp():
 
         price = services[service]
 
-        ai_reply = ask_ai(
-            f"""
-        User selected {service}.
-
-        Price is ₹{price}.
-
-        Ask preferred slot naturally in the SAME language as the user.
-
-        Available slots:
-        11 AM
-        1 PM
-        4 PM
-        """
-        )
-
-        resp.message(ai_reply)
-
+        lang = state["language"]
+        reply = responses[lang]["slot"].format(service=service,price=price)
+        
+        resp.message(reply)
         return str(resp)
 
 
@@ -172,13 +242,10 @@ def whatsapp():
        state["slot"] = msg
        state["step"] = "name"
 
-       ai_reply = ask_ai(
-        """
-       Ask customer's name naturally in the same language.
-       """
-       )
-
-       resp.message(ai_reply)
+       lang = state["language"]
+       reply = responses[lang]["ask_name"]
+       
+       resp.message(reply)
 
        return str(resp)
 
@@ -193,33 +260,19 @@ def whatsapp():
        price = services[service]
        slot = state["slot"]
        name = state["name"]
-
-       ai_reply = ask_ai(
-        f"""
-      Confirm salon booking naturally.
-
-      Customer name: {name}
-       Service: {service}
-       Price: ₹{price}
-       Slot: {slot}
-
-      Reply in the SAME language and tone as the user.
-
-      Make it feel like a real salon booking confirmation.
-      """
-     )
-
-       resp.message(ai_reply)
+       
+       lang = state["language"]
+       reply = responses[lang]["confirmation"].format(
+           name=name,
+           service=service,
+           price=price,
+           slot=slot
+       )  
+     
+       resp.message(reply)
 
        return str(resp)
 
-
-    # fallback AI chat
-    ai_reply = ask_ai(msg)
-
-    resp.message(ai_reply)
-
-    return str(resp)
 
  
 if __name__ == "__main__":
