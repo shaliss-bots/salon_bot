@@ -186,7 +186,9 @@ def whatsapp():
     
     if state["language"] == "":
         state["language"] = language
-    language = state["language"] 
+        
+    lang= state["language"]
+    print("LANG =",lang) 
        
     resp = MessagingResponse()
     
