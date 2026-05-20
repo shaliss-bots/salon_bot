@@ -260,16 +260,22 @@ def whatsapp():
 
       # slot selection
     if state["step"] == "slot":
+        
+        valid_slots =["11","11 AM","1","1 PM","4","4 PM"]
+        
+        if msg not in valid_slots:
+            resp.message("Please select available slot 😊")
+            return str(resp)
 
-       state["slot"] = msg
-       state["step"] = "name"
+        state["slot"] = msg
+        state["step"] = "name"
 
-       lang = state["language"]
-       reply = responses[lang]["name"]
+        lang = state["language"]
+        reply = responses[lang]["name"]
        
-       resp.message(reply)
+        resp.message(reply)
 
-       return str(resp)
+        return str(resp)
 
 
       # final confirmation
