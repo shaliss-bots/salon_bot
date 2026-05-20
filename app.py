@@ -220,7 +220,7 @@ def whatsapp():
         return str(resp)
     
       #consultation reply
-    booking_keywords =[
+    booking_words =[
         "haircut",
         "facial",
         "cleanup",
@@ -228,7 +228,8 @@ def whatsapp():
         "makeup",
         "spa"
     ]
-    is_booking = any(word in msg for word in booking_keywords)
+    is_booking =( 
+    any(word in msg for word in booking_words) or msg in services)
     
     if (
         intent == "consultation"
@@ -249,6 +250,8 @@ def whatsapp():
         price = services[service]
 
         lang = state["language"]
+        
+        print("LANGUAGE =", lang)
         reply = responses[lang]["slot"].format(service=service,price=price)
         
         resp.message(reply)
@@ -262,7 +265,7 @@ def whatsapp():
        state["step"] = "name"
 
        lang = state["language"]
-       reply = responses[lang]["ask_name"]
+       reply = responses[lang]["name"]
        
        resp.message(reply)
 
@@ -281,7 +284,7 @@ def whatsapp():
        name = state["name"]
        
        lang = state["language"]
-       reply = responses[lang]["confirmation"].format(
+       reply = responses[lang]["confirm"].format(
            name=name,
            service=service,
            price=price,
