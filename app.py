@@ -184,11 +184,9 @@ def whatsapp():
 
     state = user_state[user]
     
-    if state["language"] == "":
-        state["language"] = language
-        
-    lang= state["language"]
-    print("LANG =",lang) 
+    state["language"] = language
+    state["tone"] = tone
+    state["intent"] = intent
        
     resp = MessagingResponse()
     
