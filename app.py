@@ -270,7 +270,13 @@ def whatsapp():
         state["slot"] = msg
         state["step"] = "name"
 
-        lang = state["language"]
+        lang = state.get("language")
+        
+        if not lang:
+            detected = detect_user(msg)
+            
+            lang = detected["language"]
+            state["language"] = lang
         reply = responses[lang]["name"]
        
         resp.message(reply)
