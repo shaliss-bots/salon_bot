@@ -273,6 +273,7 @@ def whatsapp():
         state["step"] = "name"
 
         lang = state.get("language")
+        print(lang)
         
         
         reply = responses[lang]["name"]
