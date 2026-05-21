@@ -263,7 +263,7 @@ def whatsapp():
         
         msg = msg.strip().upper()
         
-        valid_slots =["11","11 AM","1","1 PM","4","4 PM"]
+        valid_slots =["11","1","1 PM","4","4 PM"]
         
         if msg not in valid_slots:
             resp.message("Please select available slot 😊")
@@ -274,10 +274,7 @@ def whatsapp():
 
         lang = state.get("language")
         
-        if not lang:
-            
-            lang = detect_user(msg)
-            state["language"] = lang
+        
         reply = responses[lang]["name"]
        
         resp.message(reply)
