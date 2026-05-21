@@ -261,6 +261,8 @@ def whatsapp():
       # slot selection
     if state["step"] == "slot":
         
+        msg = msg.strip().upper()
+        
         valid_slots =["11","11 AM","1","1 PM","4","4 PM"]
         
         if msg not in valid_slots:
@@ -273,16 +275,14 @@ def whatsapp():
         lang = state.get("language")
         
         if not lang:
-            detected = detect_user(msg)
             
-            lang = detected["language"]
+            lang = detect_user(msg)
             state["language"] = lang
         reply = responses[lang]["name"]
        
         resp.message(reply)
 
         return str(resp)
-
 
       # final confirmation
     if state["step"] == "name":
