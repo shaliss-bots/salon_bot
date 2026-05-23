@@ -271,10 +271,12 @@ def whatsapp():
 
         state["slot"] = msg
         state["step"] = "name"
+        
+        state["language"] = data["language"].strip().lower()
 
-        lang = state.get("language","english").strip().lower()
+        lang = state["language"]
        
-        reply = responses.get(lang,responses["english"])["name"]
+        reply = responses[lang]["name"]
        
         resp.message(reply)
 
