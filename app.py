@@ -184,9 +184,11 @@ def whatsapp():
 
     state = user_state[user]
     
-    state["language"] = language
-    state["tone"] = tone
-    state["intent"] = intent
+    if state["step"] == "start":
+        
+     state["language"] = language
+     state["tone"] = tone
+     state["intent"] = intent
        
     resp = MessagingResponse()
     
