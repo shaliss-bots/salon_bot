@@ -184,7 +184,7 @@ def whatsapp():
 
     state = user_state[user]
     
-    if state["step"] == "start":
+    if  not state["language"]:
         state["language"] = language
         
     state["tone"] = tone
@@ -304,6 +304,12 @@ def whatsapp():
        )  
      
        resp.message(reply)
+       
+       state["step"] = "start"
+       state["language"] = ""
+       state["service"] = ""
+       state["slot"] = ""
+       state["name"] = ""
 
        return str(resp)
 
