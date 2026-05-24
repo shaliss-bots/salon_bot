@@ -185,10 +185,10 @@ def whatsapp():
     state = user_state[user]
     
     if state["step"] == "start":
+        state["language"] = language
         
-     state["language"] = language
-     state["tone"] = tone
-     state["intent"] = intent
+    state["tone"] = tone
+    state["intent"] = intent
        
     resp = MessagingResponse()
     
