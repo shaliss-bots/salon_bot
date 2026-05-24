@@ -159,24 +159,15 @@ def whatsapp():
     msg = request.form.get("Body").lower()
     user = request.form.get("From")
     
-    detected = detect_user(msg)
-    
-    data = json.loads(detected)
-    
-    language = data["language"]
-    tone = data["tone"]
-    intent = data["intent"]
-    reply_text = data["reply"]
-    
-
     if user not in user_state:
         user_state[user] = {
-            "welcome": False,
+            "welcome":False,
             "step":"start",
             "service":"",
             "slot":"",
             "name":"",
             "language":"",
+            "language_locked":False,
             "tone":"casual",
             "intent":"booking"
             
@@ -184,11 +175,22 @@ def whatsapp():
 
     state = user_state[user]
     
-    if  not state["language"]:
-        state["language"] = language
-        
-    state["tone"] = tone
-    state["intent"] = intent
+    if not state["language_locked"] :
+    
+      detected = detect_user(msg)
+    
+      data = json.loads(detected)
+    
+      state["language"] = data["language"].strip().lower()
+    
+      state["tone"] = data["tone"]
+      state["intent"] = data["intent"]
+      state["language_locked"] = True
+    
+    language = state["language"]
+    tone = state["tone"]
+    intent = state["intent"]
+    
        
     resp = MessagingResponse()
     
@@ -274,8 +276,6 @@ def whatsapp():
         state["slot"] = msg
         state["step"] = "name"
         
-        state["language"] = data["language"].strip().lower()
-
         lang = state["language"]
        
         reply = responses[lang]["name"]
@@ -305,8 +305,9 @@ def whatsapp():
      
        resp.message(reply)
        
-       state["step"] = "start"
        state["language"] = ""
+       state["language_locked"] = False
+       state["step"] = "start"
        state["service"] = ""
        state["slot"] = ""
        state["name"] = ""
