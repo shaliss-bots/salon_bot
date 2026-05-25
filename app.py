@@ -122,14 +122,14 @@ def detect_user(user_message):
                     "language":"punjabi",
                      "tone":"casual",
                      "intent":"consultation",
-                     "reply":"Hair spa health reh sakda ho tusi😊"
+                     
                     }
                     
                     {
                         "language":"punjabi",
                         "tone":"casual",
                         "intent":"booking",
-                        "reply":""
+                        
                     }
                     """                
             },
@@ -161,13 +161,13 @@ def whatsapp():
     
     if user not in user_state:
         user_state[user] = {
-            "welcome":False,
+            "welcome": False,
             "step":"start",
-            "service":"",
-            "slot":"",
-            "name":"",
-            "language":"",
-            "language_locked":False,
+            "service": "",
+            "slot": "",
+            "name": "",
+            "language": "",
+            "language_locked": False,
             "tone":"casual",
             "intent":"booking"
             
@@ -240,7 +240,7 @@ def whatsapp():
         and not is_booking
         and state["step"] == "start"
     ):   
-        resp.message(reply_text)
+        resp.message(reply)
         return str(resp) 
           
     # detect service
