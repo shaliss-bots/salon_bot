@@ -108,14 +108,10 @@ def detect_user(user_message):
                    booking
                    consultation
                    chat
-                   
-                   If intent is consultation, also generate a short natural salon
-                   consultation reply in the same language as the user.
-                   
-                   If intent is booking, keep reply empty.
+                
                    
 
-                  Reply ONLY in JSON format.
+                  Return ONLY in JSON .
 
                   Example:
                   {
@@ -129,6 +125,13 @@ def detect_user(user_message):
                         "language":"punjabi",
                         "tone":"casual",
                         "intent":"booking",
+                        
+                    }
+                    
+                    {
+                        "language":"punjabi",
+                        "tone":"casual",
+                        "intent":"chat",
                         
                     }
                     """                
