@@ -108,11 +108,30 @@ def detect_user(user_message):
                    booking
                    consultation
                    chat
-                
-                   
+            
+                  
+                  Roman Punjabi examples:
+                  tusi, menu, dasso, karona -> punjabi
 
-                  Return ONLY in JSON .
+                  Roman Hindi examples:
+                  mujhe, batao, kya, karna -> hindi
 
+                  Roman Marathi examples:
+                  tumcha, pahije -> marathi
+
+                   Roman Chhattisgarhi examples:
+                   mor, tor -> chhattisgarhi
+
+                  English salon words like:
+                  haircut, spa, facial, booking
+
+                  DO NOT use these English salon words to detect language.
+
+                  Detect user's dominant language from Roman text.
+                  
+                  Return ONLY JSON.
+                  
+                  
                   Example:
                   {
                     "language":"punjabi",
