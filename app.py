@@ -226,9 +226,17 @@ def whatsapp():
     data = json.loads(detected)
     
     detected_language = data["language"].strip().lower()
-      
-    if detected_language in responses:
-          state["language"] = detected_language
+    
+    ignore_values = [
+        "11", "1", "4", "11 AM", "1 PM", "4 PM" 
+     ]
+    #SLOT AND NAME PE NO LANGUAGE CHANGE
+    if (
+        msg.upper() not in ignore_values and state["step"] != "name"
+        and detected_language in responses
+    ):
+    
+        state["language"] = detected_language
              
     state["tone"] = data["tone"]
     state["intent"] = data["intent"]
