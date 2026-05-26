@@ -214,7 +214,6 @@ def whatsapp():
             "slot": "",
             "name": "",
             "language": "",
-            "language_locked": False,
             "tone":"casual",
             "intent":"booking"
             
@@ -222,20 +221,17 @@ def whatsapp():
 
     state = user_state[user]
     
-    if not state["language_locked"] :
+    detected = detect_user(msg)
     
-      detected = detect_user(msg)
+    data = json.loads(detected)
     
-      data = json.loads(detected)
-    
-      detected_language = data["language"].strip().lower()
+    detected_language = data["language"].strip().lower()
       
-      if state["step"] == "start":
-            
-             state["language"] = detected_language
-             state["language_locked"] = True
-      state["tone"] = data["tone"]
-      state["intent"] = data["intent"]
+    if detected_language in responses:
+          state["language"] = detected_language
+             
+    state["tone"] = data["tone"]
+    state["intent"] = data["intent"]
       
     
     language = state["language"]
@@ -357,7 +353,6 @@ def whatsapp():
        resp.message(reply)
        
        state["language"] = ""
-       state["language_locked"] = False
        state["step"] = "start"
        state["service"] = ""
        state["slot"] = ""
