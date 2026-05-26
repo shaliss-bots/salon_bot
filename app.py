@@ -103,7 +103,6 @@ def detect_user(user_message):
                    hindi
                    punjabi
                    marathi
-                   chhattisgarhi
 
                    Possible intents:
                    booking
@@ -123,14 +122,40 @@ def detect_user(user_message):
                    Roman Chhattisgarhi examples:
                    mor, tor -> chhattisgarhi
 
-                  English salon words like:
-                  haircut, spa, facial, booking
-
-                  DO NOT use these English salon words to detect language.
-
-                  Detect user's dominant language from Roman text.
+                   English salon words like:
+                   haircut, spa, facial, booking
                   
-                  Return ONLY JSON.
+                  IMPORTANT RULE:
+
+                  Detect ONLY language.
+
+                   Ignore service words:
+                   
+                   haircut
+                   spa
+                   facial
+                   booking
+                   cleanup
+                   waxing
+                   makeup
+
+                   User language examples:
+
+                   "menu haircut karona sii tusi kuch daso"
+                    -> punjabi
+
+                    "mujhe haircut karwana hai"
+                    -> hindi
+
+                    "I want haircut booking"
+                    -> english
+
+
+                    DO NOT use these English salon words to detect language.
+
+                     Detect user's dominant language from Roman text.
+                  
+                    Return ONLY JSON.
                   
                   
                   Example:
