@@ -18,6 +18,7 @@ services= {
     "cleanup":600,
     "waxing":700,
     "makeup":2500
+
 }
 
 slots = ["11 AM" ,"1 PM","4 PM"]
@@ -174,8 +175,7 @@ def save_booking(data):
         bookings.append(data)
         f.seek(0)
         json.dump(bookings, f, indent=2)
-
-
+                              
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
     msg = request.form.get("Body").lower()
@@ -203,11 +203,15 @@ def whatsapp():
     
       data = json.loads(detected)
     
-      state["language"] = data["language"].strip().lower()
-    
+      detected_language = data["language"].strip().lower()
+      
+      if state["step"] == "start":
+            
+             state["language"] = detected_language
+             state["language_locked"] = True
       state["tone"] = data["tone"]
       state["intent"] = data["intent"]
-      state["language_locked"] = True
+      
     
     language = state["language"]
     tone = state["tone"]
@@ -335,8 +339,6 @@ def whatsapp():
        state["name"] = ""
 
        return str(resp)
-
-
  
 if __name__ == "__main__":
     import os
