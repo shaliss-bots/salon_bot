@@ -5,11 +5,16 @@ import json
 import os
 from services import services
 from openai import OpenAI
+from datetime import datetime, timedelta
+from apscheduler.schedulers.background import BackgroundScheduler
 user_state = {}
+bookings = []
 
 
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+
 
 services= {
     "haircut":300,
@@ -21,7 +26,7 @@ services= {
 
 }
 
-slots = ["11 AM" ,"1 PM","4 PM"]
+slots = ["07:30 PM" ,"07:35 PM","07:40 PM"]
 
 
 responses = {
@@ -37,6 +42,9 @@ responses = {
         "confirm":
         "✨ Booking Confirmed 🎉\n{name}, your {service} appointment is booked for {slot}.\nPrice: ₹{price} 😊",
         
+        "reminder": 
+        "⏰ Hi {name}, your {service} appointment is in 1 hour at {slot}. See you soon 😊"
+        
           
     },
 
@@ -49,7 +57,10 @@ responses = {
         "😊 Booking ke liye aapka naam bata dijiye.",
 
         "confirm":
-        "✨ Booking Confirmed 🎉\n{name} ji, aapka {service} appointment {slot} ke liye book ho gaya hai.\nPrice: ₹{price} 😊"
+        "✨ Booking Confirmed 🎉\n{name} ji, aapka {service} appointment {slot} ke liye book ho gaya hai.\nPrice: ₹{price} 😊",
+        
+        "reminder": 
+        "⏰ {name} ji, aapki {service} appointment 1 ghante baad {slot} par hai 😊"
     },
 
     "punjabi": {
@@ -61,7 +72,10 @@ responses = {
         "😊 Booking layi apna naam dass deo.",
 
         "confirm":
-        "✨ Booking Confirmed 🎉\n{name} ji, tuhadi {service} appointment {slot} layi book ho gayi aa.\nPrice: ₹{price} 😊"
+        "✨ Booking Confirmed 🎉\n{name} ji, tuhadi {service} appointment {slot} layi book ho gayi aa.\nPrice: ₹{price} 😊",
+        
+        "reminder": 
+        "⏰ {name} ji, tuhadi {service} appointment 1 ghante baad {slot} te hai 😊"
     },
 
     "marathi": {
@@ -73,7 +87,12 @@ responses = {
         "😊 Booking sathi tumcha nav सांगा.",
 
         "confirm":
-        "✨ Booking Confirmed 🎉\n{name}, tumchi {service} appointment {slot} la confirm zali aahe.\nPrice: ₹{price} 😊"
+        "✨ Booking Confirmed 🎉\n{name}, tumchi {service} appointment {slot} la confirm zali aahe.\nPrice: ₹{price} 😊",
+        
+        "reminder": 
+        "⏰ {name}, tumchi {service} appointment 1 tasane {slot} la aahe 😊"
+        
+        
     }
 
 }
@@ -192,6 +211,33 @@ def detect_user(user_message):
 
     return response.choices[0].message.content
 
+def send_reminders():
+
+    now = datetime.now().strftime("%I:%M %p")
+
+    for booking in bookings:
+
+        slot = booking["slot"]
+        if slot == now:
+
+            lang = booking["language"]
+
+            reply = responses[lang]["reminder"].format(
+                name=booking["name"],
+                service=booking["service"],
+                slot=booking["slot"]
+            )
+
+            client.messages.create(
+                from_='whatsapp:+14155238886',
+                body=reply,
+                to=f'whatsapp:{booking["phone"]}'
+            )
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(send_reminders, 'interval', minutes=1)
+scheduler.start()
+
 
 
 def save_booking(data):
@@ -228,7 +274,7 @@ def whatsapp():
     detected_language = data["language"].strip().lower()
     
     ignore_values = [
-        "11", "1", "4", "11 AM", "1 PM", "4 PM" 
+        "07:30", "07:35", "07:40", "07:30 PM", "07:35 PM", "07:40 PM" 
      ]
     #SLOT AND NAME PE NO LANGUAGE CHANGE
     if (
@@ -357,6 +403,16 @@ def whatsapp():
            price=price,
            slot=slot
        )  
+       
+       # booking save
+       bookings.append({
+           
+           "phone" : user,
+           "name" : name,
+           "service" : service,
+           "slot" : slot,
+           "language" : lang
+       })
      
        resp.message(reply)
        
