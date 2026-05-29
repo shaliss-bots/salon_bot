@@ -31,7 +31,7 @@ services= {
 
 }
 
-slots = ["07:30 PM" ,"07:35 PM", "07:40 PM"]
+slots = ["09:33 PM" ,"08:35 PM", "09:40 PM"]
 
 
 responses = {
@@ -39,7 +39,7 @@ responses = {
     "english": {
 
         "slot":
-        "✨ {service} price is ₹{price}\nAvailable slots:\n07:30 PM\n07:35 PM\n07:40 PM 😊",
+        "✨ {service} price is ₹{price}\nAvailable slots:\n09:33 PM\n09:35 PM\n09:40 PM 😊",
 
         "name":
         "😊 May I know your name for booking?",
@@ -56,7 +56,7 @@ responses = {
     "hindi": {
 
         "slot": 
-        "✨ {service} ki price ₹{price} hai\nAvailable slots:\n07:30 PM\n07:35 PM\n07:40 PM 😊",
+        "✨ {service} ki price ₹{price} hai\nAvailable slots:\n09:33 PM\n09:35 PM\n09:40 PM 😊",
 
         "name":
         "😊 Booking ke liye aapka naam bata dijiye.",
@@ -71,7 +71,7 @@ responses = {
     "punjabi": {
         
         "slot": 
-        "✨ {service} da price ₹{price} aa\nAvailable slots:\n07:30 PM\n07:35 PM\n07:40 PM 😊",
+        "✨ {service} da price ₹{price} aa\nAvailable slots:\n09:33 PM\n09:35 PM\n09:40 PM 😊",
     
         "name":
         "😊 Booking layi apna naam dass deo.",
@@ -86,7 +86,7 @@ responses = {
     "marathi": {
         
          "slot":
-            "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n07:30 PM\n07:35 PM\n07:40 PM 😊",
+            "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n09:33 PM\n09:35 PM\n09:40 PM 😊",
          
         "name":
         "😊 Booking sathi tumcha nav सांगा.",
@@ -279,7 +279,7 @@ def whatsapp():
     detected_language = data["language"].strip().lower()
     
     ignore_values = [
-        "07:30", "07:35", "07:40", "07:30 PM", "07:35 PM", "07:40 PM" 
+        "09:33", "09:35", "09:40", "09:33 PM", "09:35 PM", "09:40 PM" 
      ]
     #SLOT AND NAME PE NO LANGUAGE CHANGE
     if (
@@ -373,7 +373,7 @@ def whatsapp():
         
         msg = msg.strip().upper()
         
-        valid_slots =["07:30","07:35","07:30 PM","07:40","07:35 PM","07:40 PM"]
+        valid_slots =["09:33","09:35","09:40 PM","09:33","09:35 PM","09:40 PM"]
         
         if msg not in valid_slots:
             resp.message("Please select available slot 😊")
