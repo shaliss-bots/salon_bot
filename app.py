@@ -34,7 +34,7 @@ responses = {
     "english": {
 
         "slot":
-        "✨ {service} price is ₹{price}\nAvailable slots:\n11 AM\n1 PM\n4 PM 😊",
+        "✨ {service} price is ₹{price}\nAvailable slots:\n07:30 PM\n07:35 PM\n07:40 PM 😊",
 
         "name":
         "😊 May I know your name for booking?",
@@ -50,8 +50,8 @@ responses = {
 
     "hindi": {
 
-        "slot":
-        "✨ {service} ka price ₹{price} hai\nAvailable slots:\n11 AM\n1 PM\n4 PM 😊",
+        "slot": 
+        "✨ {service} ki price ₹{price} hai\nAvailable slots:\n07:30 PM\n07:35 PM\n07:40 PM 😊",
 
         "name":
         "😊 Booking ke liye aapka naam bata dijiye.",
@@ -64,10 +64,10 @@ responses = {
     },
 
     "punjabi": {
-
-        "slot":
-        "✨ {service} da price ₹{price} aa\nAvailable slots:\n11 AM\n1 PM\n4 PM 😊",
-
+        
+        "slot": 
+        "✨ {service} da price ₹{price} aa\nAvailable slots:\n07:30 PM\n07:35 PM\n07:40 PM 😊",
+    
         "name":
         "😊 Booking layi apna naam dass deo.",
 
@@ -79,10 +79,10 @@ responses = {
     },
 
     "marathi": {
-
-        "slot":
-        "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n11 AM\n1 PM\n4 PM 😊",
-
+        
+         "slot":
+            "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n07:30 PM\n07:35 PM\n07:40 PM 😊",
+         
         "name":
         "😊 Booking sathi tumcha nav सांगा.",
 
