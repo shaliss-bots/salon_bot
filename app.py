@@ -1,6 +1,7 @@
 from flask import Flask, request
 import json
 from twilio.twiml.messaging_response import MessagingResponse
+from twilio.rest import Client
 import json  
 import os
 from services import services
@@ -13,6 +14,10 @@ bookings = []
 
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+twilio_client = Client(
+    os.getenv("TWILIO_ACCOUNT_SID"),
+    os.getenv("TWILIO_AUTH_TOKEN")
+)
 
 
 
@@ -228,7 +233,7 @@ def send_reminders():
                 slot=booking["slot"]
             )
 
-            client.messages.create(
+            twilio_client.messages.create(
                 from_='whatsapp:+14155238886',
                 body=reply,
                 to=f'whatsapp:{booking["phone"]}'
