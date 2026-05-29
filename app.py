@@ -26,7 +26,7 @@ services= {
 
 }
 
-slots = ["07:30 PM" ,"07:35 PM","07:40 PM"]
+slots = ["07:30 PM" ,"07:35 PM", "07:40 PM"]
 
 
 responses = {
@@ -368,7 +368,7 @@ def whatsapp():
         
         msg = msg.strip().upper()
         
-        valid_slots =["11","1","11 AM","4","4 PM","1 PM"]
+        valid_slots =["07:30","07:35","07:30 PM","07:40","07:35 PM","07:40 PM"]
         
         if msg not in valid_slots:
             resp.message("Please select available slot 😊")
