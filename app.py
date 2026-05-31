@@ -31,7 +31,7 @@ services= {
 
 }
 
-slots = ["02:10 PM" ,"02:12 PM", "02:13 PM"]
+slots = ["03:04 PM" ,"03:05 PM", "03:06 PM"]
 
 
 responses = {
@@ -39,7 +39,7 @@ responses = {
     "english": {
 
         "slot":
-        "✨ {service} price is ₹{price}\nAvailable slots:\n02:10 PM\n02:12 PM\n02:13PM 😊",
+        "✨ {service} price is ₹{price}\nAvailable slots:\n03:04 PM\n03:05 PM\n03:06 PM 😊",
 
         "name":
         "😊 May I know your name for booking?",
@@ -56,7 +56,7 @@ responses = {
     "hindi": {
 
         "slot": 
-        "✨ {service} ki price ₹{price} hai\nAvailable slots:\n02:10 PM\n02:12 PM\n02:13 PM 😊",
+        "✨ {service} ki price ₹{price} hai\nAvailable slots:\n03:04 PM\n03:05 PM\n03:06 PM 😊",
 
         "name":
         "😊 Booking ke liye aapka naam bata dijiye.",
@@ -71,7 +71,7 @@ responses = {
     "punjabi": {
         
         "slot": 
-        "✨ {service} da price ₹{price} aa\nAvailable slots:\n02:10 PM\n02:12 PM\n02:13 PM 😊",
+        "✨ {service} da price ₹{price} aa\nAvailable slots:\n03:04 PM\n03:05 PM\n03:06 PM 😊",
     
         "name":
         "😊 Booking layi apna naam dass deo.",
@@ -86,7 +86,7 @@ responses = {
     "marathi": {
         
          "slot":
-            "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n02:10 PM\n02:12 PM\n02:13 PM 😊",
+            "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n03:04 PM\n03:05 PM\n03:06 PM 😊",
          
         "name":
         "😊 Booking sathi tumcha nav सांगा.",
@@ -218,10 +218,10 @@ def detect_user(user_message):
 
 def send_reminders():
     
-    print("REMINDER FUNCTION  RUNNING") 
-    print("TIME =", datetime.now().strftime("%I:%M %p"))
-    
     now = datetime.now().strftime("%I:%M %p")
+    
+    with open("data.json", "r+") as f:
+        bookings = json.load(f)
 
     for booking in bookings:
 
@@ -282,7 +282,7 @@ def whatsapp():
     detected_language = data["language"].strip().lower()
     
     ignore_values = [
-        "02:10", "02:12", "02:13", "02:10 PM", "02:12 PM", "02:13 PM" 
+        "03:04", "03:05", "03:06", "03:04 PM", "03:05 PM", "03:06 PM" 
      ]
     #SLOT AND NAME PE NO LANGUAGE CHANGE
     if (
@@ -376,7 +376,7 @@ def whatsapp():
         
         msg = msg.strip().upper()
         
-        valid_slots =["02:10","02:12","02:13 PM","02:10","02:12 PM","02:13 PM"]
+        valid_slots =["03:04","03:05","03:06 PM","03:06","03:05 PM","03:04 PM"]
         
         if msg not in valid_slots:
             resp.message("Please select available slot 😊")
@@ -413,7 +413,7 @@ def whatsapp():
        )  
        
        # booking save
-       bookings.append({
+       save_booking({
            
            "phone" : user,
            "name" : name,
