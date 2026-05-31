@@ -31,7 +31,7 @@ services= {
 
 }
 
-slots = ["03:04 PM" ,"03:05 PM", "03:06 PM"]
+slots = ["03:44 PM" ,"03:45 PM", "03:46 PM"]
 
 
 responses = {
@@ -39,7 +39,7 @@ responses = {
     "english": {
 
         "slot":
-        "✨ {service} price is ₹{price}\nAvailable slots:\n03:04 PM\n03:05 PM\n03:06 PM 😊",
+        "✨ {service} price is ₹{price}\nAvailable slots:\n03:44 PM\n03:45 PM\n03:46 PM 😊",
 
         "name":
         "😊 May I know your name for booking?",
@@ -56,7 +56,7 @@ responses = {
     "hindi": {
 
         "slot": 
-        "✨ {service} ki price ₹{price} hai\nAvailable slots:\n03:04 PM\n03:05 PM\n03:06 PM 😊",
+        "✨ {service} ki price ₹{price} hai\nAvailable slots:\n03:44 PM\n03:45 PM\n03:46 PM 😊",
 
         "name":
         "😊 Booking ke liye aapka naam bata dijiye.",
@@ -71,7 +71,7 @@ responses = {
     "punjabi": {
         
         "slot": 
-        "✨ {service} da price ₹{price} aa\nAvailable slots:\n03:04 PM\n03:05 PM\n03:06 PM 😊",
+        "✨ {service} da price ₹{price} aa\nAvailable slots:\n03:44 PM\n03:45 PM\n03:46 PM 😊",
     
         "name":
         "😊 Booking layi apna naam dass deo.",
@@ -86,7 +86,7 @@ responses = {
     "marathi": {
         
          "slot":
-            "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n03:04 PM\n03:05 PM\n03:06 PM 😊",
+            "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n03:44 PM\n03:45 PM\n03:46 PM 😊",
          
         "name":
         "😊 Booking sathi tumcha nav सांगा.",
@@ -282,7 +282,7 @@ def whatsapp():
     detected_language = data["language"].strip().lower()
     
     ignore_values = [
-        "03:04", "03:05", "03:06", "03:04 PM", "03:05 PM", "03:06 PM" 
+        "03:44", "03:45", "03:46", "03:44 PM", "03:45 PM", "03:46 PM" 
      ]
     #SLOT AND NAME PE NO LANGUAGE CHANGE
     if (
@@ -376,7 +376,7 @@ def whatsapp():
         
         msg = msg.strip().upper()
         
-        valid_slots =["03:04","03:05","03:06 PM","03:06","03:05 PM","03:04 PM"]
+        valid_slots =["03:44","03:45","03:46 PM","03:46","03:45 PM","03:44 PM"]
         
         if msg not in valid_slots:
             resp.message("Please select available slot 😊")
@@ -422,7 +422,8 @@ def whatsapp():
            "language" : lang
        })
      
-       resp.message(reply)
+       #resp.message(reply)
+       resp.message("TEST SAVE")
        
        state["language"] = ""
        state["step"] = "start"
