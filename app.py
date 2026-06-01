@@ -422,8 +422,8 @@ def whatsapp():
            "language" : lang
        })
      
-       #resp.message(reply)
-       resp.message("TEST SAVE")
+       resp.message(reply)
+
        
        state["language"] = ""
        state["step"] = "start"
