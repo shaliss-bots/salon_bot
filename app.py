@@ -8,8 +8,10 @@ from services import services
 from openai import OpenAI
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
+from supabase import create_client
+
 user_state = {}
-bookings = []
+booking = []
 
 
 app = Flask(__name__)
@@ -18,7 +20,13 @@ twilio_client = Client(
     os.getenv("TWILIO_ACCOUNT_SID"),
     os.getenv("TWILIO_AUTH_TOKEN")
 )
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+supabase = create_client(
+    SUPABASE_URL,
+    SUPABASE_KEY
+)
 
 
 services= {
@@ -216,44 +224,40 @@ def detect_user(user_message):
 
     return response.choices[0].message.content
 
-def send_reminders():
+#def send_reminders():
     
-    now = datetime.now().strftime("%I:%M %p")
+   # now = datetime.now().strftime("%I:%M %p")
     
-    with open("data.json", "r+") as f:
-        bookings = json.load(f)
+   # with open("data.json", "r+") as f:
+        #bookings = json.load(f)
 
-    for booking in bookings:
+   # for booking in bookings:
 
-        slot = booking["slot"]
-        if slot == now:
+      #  slot = booking["slot"]
+        #if slot == now:
 
-            lang = booking["language"]
+           # lang = booking["language"]
 
-            reply = responses[lang]["reminder"].format(
-                name=booking["name"],
-                service=booking["service"],
-                slot=booking["slot"]
-            )
+            #reply = responses[lang]["reminder"].format(
+                #3name=booking["name"],
+               # service=booking["service"],
+                #slot=booking["slot"]
+          #  )
 
-            twilio_client.messages.create(
-                from_='whatsapp:+14155238886',
-                body=reply,
-                to=f'whatsapp:{booking["phone"]}'
-            )
+           # twilio_client.messages.create(
+               # from_='whatsapp:+14155238886',
+               # body=reply,
+                #to=f'whatsapp:{booking["phone"]}'
+           # )
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(send_reminders, 'interval', minutes=1)
-scheduler.start()
+#scheduler = BackgroundScheduler()
+#scheduler.add_job(send_reminders, 'interval', minutes=1)
+#scheduler.start()
 
 
 
 def save_booking(data):
-    with open("data.json", "r+") as f:
-        bookings = json.load(f)
-        bookings.append(data)
-        f.seek(0)
-        json.dump(bookings, f, indent=2)
+    supabase.table("booking").insert(data).execute( )
                               
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
