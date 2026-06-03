@@ -124,7 +124,7 @@ def detect_user(user_message):
                  "content": """
                    You are ONLY a language analyzer.
 
-                    Detect:
+                   Detect:
 
                    1. language
                    2. tone
@@ -320,15 +320,16 @@ def whatsapp():
         """✨*Glow Salon Assistant*✨
 
 
-        Hey beautiful 😊
+        Hey lovelyperson's😊
 
-        I’m here to help you with salon bookings and beauty services 💄
+        I’m here to help you with salon bookings and beauty services💄
 
-         Main tumhari language naturally samajh sakta hu.
+         Main tumhari language naturally 
+         samajh sakta hu.
 
-         Hindi . English . Punjabi . Chhattisgarhi
+         Hindi. English. Punjabi. Chhattisgarhi
    
-         kaunsi service chahiye today? 😊
+         kaunsi service chahiye today?😊
         """
         )
         
