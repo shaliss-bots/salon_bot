@@ -316,22 +316,21 @@ def whatsapp():
 
 
         #  welcome message and branding logo
-        welcome_msg = resp.message(
-        """✨*Glow Salon Assistant*✨
+        welcome_msg = resp.message("""
+             
+        ✨ Welcome to Glow Salon ✨
 
+       Every appointment starts with a choice...
 
-        Hey lovelyperson's😊
+       ✨ Fresh Look
+       ✨ Self-Care
+       ✨ Special Occasion
 
-        I’m here to help you with salon bookings and beauty services💄
+       🌐 Hindi • English • Punjabi • Marathi • 
+       Chhattisgarhi
 
-         Main tumhari language naturally 
-         samajh sakta hu.
-
-         Hindi. English. Punjabi. Chhattisgarhi
-   
-         kaunsi service chahiye today?😊
-        """
-        )
+        what would you like to book today?
+       """)
         
         welcome_msg.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/Untitled_design_2_t1kqlx.png")
         
@@ -424,7 +423,10 @@ def whatsapp():
            "name" : name,
            "service" : service,
            "slot" : slot,
-           "language" : lang
+           "language" : lang,
+           "price" : price,
+           "status" : "confirmed"
+           
        })
      
        resp.message(reply)
