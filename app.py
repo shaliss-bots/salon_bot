@@ -318,18 +318,18 @@ def whatsapp():
         #  welcome message and branding logo
         welcome_msg = resp.message("""
              
-        ✨ Welcome to Glow Salon ✨
+       ✨ Welcome to Glow Salon ✨
 
-       Every appointment starts with a choice...
+     Every appointment starts with a choice...
 
-       ✨ Fresh Look
-       ✨ Self-Care
-       ✨ Special Occasion
+     ✨ Fresh Look
+     ✨ Self-Care
+     ✨ Special Occasion
 
-       🌐 Hindi • English • Punjabi • Marathi • 
-       Chhattisgarhi
+     🌐 Hindi • English • Punjabi • 
+      Marathi • Chhattisgarhi
 
-        what would you like to book today?
+     what would you like to book today?
        """)
         
         welcome_msg.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/Untitled_design_2_t1kqlx.png")
