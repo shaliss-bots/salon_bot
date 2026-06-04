@@ -97,16 +97,31 @@ responses = {
             "✨ {service} chi price ₹{price} aahe\nAvailable slots:\n03:44 PM\n03:45 PM\n03:46 PM 😊",
          
         "name":
-        "😊 Booking sathi tumcha nav सांगा.",
+        "😊 Booking sathi tumcha nav sanga.",
 
         "confirm":
         "✨ Booking Confirmed 🎉\n{name}, tumchi {service} appointment {slot} la confirm zali aahe.\nPrice: ₹{price} 😊",
         
         "reminder": 
         "⏰ {name}, tumchi {service} appointment 1 tasane {slot} la aahe 😊"
-        
-        
-    }
+          
+    },
+    
+    "chhattisgarhi": {
+
+    "slot": 
+        "✨ {service} ke daam ₹{price} hae\nAvailable slots:\n03:44 PM\n03:45 PM\n03:46 PM 😊",
+
+    "name": 
+    "🙂 Booking bar apan naam bataw na.",
+
+    "confirm": 
+    "✨ Booking Confirmed 🎉\n{name} ji, aapke {service} appointment {slot} ma book ho ge hae.\nPrice: ₹{price} 😊",
+
+    "reminder": 
+    "⏰ {name} ji, aapke {service} appointment 1 ghanta baad {slot} ma hae 😊"
+
+}
 
 }
 
