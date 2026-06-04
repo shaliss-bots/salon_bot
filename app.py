@@ -41,7 +41,6 @@ services= {
 
 slots = ["03:44 PM" ,"03:45 PM", "03:46 PM"]
 
-
 responses = {
 
     "english": {
