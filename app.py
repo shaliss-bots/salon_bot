@@ -332,7 +332,8 @@ def whatsapp():
              
        ✨ Welcome to Glow Salon ✨
 
-     Every appointment starts with a choice...
+     Every appointment starts with a 
+     choice...
 
      ✨ Fresh Look
      ✨ Self-Care
@@ -341,7 +342,8 @@ def whatsapp():
      🌐 Hindi • English • Punjabi • 
       Marathi • Chhattisgarhi
 
-     what would you like to book today?
+     what would you like to book 
+     today?
        """)
         
         welcome_msg.media("https://res.cloudinary.com/dd4bsgg46/image/upload/v1768571938/Untitled_design_2_t1kqlx.png")
@@ -437,6 +439,7 @@ def whatsapp():
            "slot" : slot,
            "language" : lang,
            "price" : price,
+           "booking_date" : datetime.now().date().isoformat(),
            "status" : "confirmed"
            
        })
