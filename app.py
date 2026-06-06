@@ -27,7 +27,6 @@ supabase = create_client(
     SUPABASE_KEY
 )
 
-
 services= {
     "haircut":300,
     "facial":800,
