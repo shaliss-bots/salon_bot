@@ -13,7 +13,6 @@ from supabase import create_client
 user_state = {}
 booking = []
 
-
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 twilio_client = Client(
