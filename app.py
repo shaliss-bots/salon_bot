@@ -270,17 +270,39 @@ def detect_user(user_message):
 
 def save_booking(data):
     supabase.table("booking").insert(data).execute( )
+    
+    
+def generate_daily_report():
+    today = datetime.now().date().isoformat()
+    
+    booking = (
+        supabase.table("booking")
+        .select("*")
+        .eq("booking_date",today)
+        .execute()
+    )
+    
+    return str(booking.data)   
                               
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
     msg = request.form.get("Body").lower()
     user = request.form.get("From")
     
+    if msg == "owner report":
+        report = generate_daily_report()
+        
+        
+        resp = MessagingResponse()
+        resp.message(report)
+        
+        return str(resp)
+    
     if user not in user_state:
         user_state[user] = {
             "welcome": False,
             "step":"start",
-            "service": "",
+            "service": "", 
             "slot": "",
             "name": "",
             "language": "",
