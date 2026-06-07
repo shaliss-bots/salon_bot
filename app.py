@@ -430,6 +430,16 @@ def whatsapp():
            slot=slot
        )  
        
+        #customer_type 
+       existing = supabase.table("booking").select("id") .eq("phone" , user) .execute()    
+        
+          
+       if existing.data:
+            customer_type = "returning"
+        
+       else:
+            customer_type = "new"    
+       
        # booking save
        save_booking({
            
@@ -440,6 +450,9 @@ def whatsapp():
            "language" : lang,
            "price" : price,
            "booking_date" : datetime.now().date().isoformat(),
+           "booking_month" : datetime.now().strftime("%Y-%m"),
+           "booking_year" : datetime.now().strftime("%Y"),
+           "customer_type" : customer_type, 
            "status" : "confirmed"
            
        })
