@@ -281,8 +281,43 @@ def generate_daily_report():
         .eq("booking_date",today)
         .execute()
     )
-    
-    return str(booking.data)   
+
+    data = booking.data
+
+    total_bookings = len(data)
+
+    revenue = sum(item["price"] for item in data)
+
+    new_customers = sum(
+        1 for item in data
+        if item.get("customer_type") == "new"
+    )
+
+    returning_customers = sum(
+        1 for item in data
+        if item.get("customer_type") == "returning"
+    )
+
+    avg_bill = (
+        revenue / total_bookings
+        if total_bookings > 0
+        else 0
+    )
+
+    report = f"""
+    📊 Daily Salon Report
+
+    📅 Total Bookings: {total_bookings}
+    💰 Revenue: ₹{revenue}
+
+     🆕 New Customers: {new_customers}
+     🔁 Returning Customers: {returning_customers}
+
+    💰 Avg Bill: ₹{round(avg_bill)}
+    """
+
+    return report
+       
                               
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
