@@ -317,8 +317,7 @@ def generate_daily_report():
     """
 
     return report
-       
-                              
+                                   
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp():
     msg = request.form.get("Body").lower()
