@@ -444,7 +444,6 @@ def whatsapp():
         resp.message(reply)
         return str(resp)
 
-
       # slot selection
     if state["step"] == "slot":
         
